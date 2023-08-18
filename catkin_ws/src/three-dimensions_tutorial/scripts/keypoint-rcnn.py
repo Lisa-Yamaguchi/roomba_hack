@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -16,13 +18,13 @@ class ImageForKeypoint:
     def __init__(self):
         self.bridge = cv_bridge.CvBridge()
         #cv2.nameWindow("window", 1)
-        self.image_sub = rospy.Subscriver('/camera/color/image_raw', rosImage, self.image_callback)
+        self.image_sub = rospy.Subscriber('/camera/color/image_raw', rosImage, self.image_callback)
 
     #画像を取得する
     def image_callback(self, msg):
 
         #画像をopenCVに渡してcv2にする
-        image_cv2 = self.bridge.imgmsg_to_cv2(msg,desired_encoding='brg8')
+        image_cv2 = self.bridge.imgmsg_to_cv2(msg,desired_encoding='bgr8')
         #cv2.imshow("window", image_cv2)
         #cv2.waitKey(3)
 
@@ -81,7 +83,7 @@ class ImageForKeypoint:
         vis_point(img, points)
 
         plt.savefig("source.png") 
-        plt.show()
+        #plt.show()
 
 
         #画像から左右を決める
