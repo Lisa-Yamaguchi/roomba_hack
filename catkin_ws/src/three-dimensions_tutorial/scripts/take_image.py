@@ -30,19 +30,17 @@ class ImageSubscriber:
             cv2.imwrite(image_filename, cv_image)
             self.image_counter += 1
             rospy.loginfo(f"Saved image: {image_filename}")
-            self.save_image = False
 
 if __name__ == '__main__':
     rospy.init_node('image_saver', anonymous=True)
     image_subscriber = ImageSubscriber()
     
     while not rospy.is_shutdown():
-        user_input = raw_input("Press Enter to save the next image, or type 'exit' to quit: ")  # Python 2
-        # user_input = input("Press Enter to save the next image, or type 'exit' to quit: ")  # Python 3
+        user_input = input("Press Enter to save the next image, or type 'exit' to quit: ")
         
         if user_input.lower() == 'exit':
             break
         elif user_input == '':
-            image_subscriber.save_image = True
+            image_subscriber.save_image = not image_subscriber.save_image
     
     rospy.signal_shutdown("Image saving program terminated.")
