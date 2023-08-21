@@ -13,9 +13,26 @@ from sensor_msgs.msg import Image as rosImage
 import cv2, cv_bridge
 
 
+class ImageForKeypoint:
 
-def judgement(image_path):
+    def __init__(self):
+        self.bridge = cv_bridge.CvBridge()
+        #cv2.nameWindow("window", 1)
+        self.image_sub = rospy.Subscriber('/camera/color/image_raw', rosImage, self.image_callback)
+
+    #画像を取得する
+    def image_callback(self, msg):      #https://rb-station.com/blogs/article/rospy-image-opencv
+
+        #画像をopenCVに渡してcv2にする
+        image_cv2 = self.bridge.imgmsg_to_cv2(msg,desired_encoding='bgr8')
+        #cv2.imshow("window", image_cv2)
+        #cv2.waitKey(3)
+
+        #jpg画像として保存
+        cv2.imwrite('save.jpg', image_cv2)
+###start
         #keypoint画像に変換（コピペ）       https://tech.fusic.co.jp/posts/2019-07-18-torchvision-keypoint-r-cnn/
+        image_path = 'save.jpg'
         image_keypoint = pilImage.open(image_path).convert('RGB')
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -76,6 +93,8 @@ def judgement(image_path):
         # 0 <= s <= 255 (彩度)　黒や白の値が抽出されるときはこの閾値を大きくする
         # 0 <= v <= 255 (明度)　これが大きいと明るく，小さいと暗い
         # ここでは青色を抽出するので120±20を閾値とした
+        """LOW_COLOR_ELBOW = np.array([55, 155, 205])
+        HIGH_COLOR_ELBOW = np.array([65, 255, 255])"""
         LOW_COLOR_WRIST = np.array([80, 155, 205])
         HIGH_COLOR_WRIST = np.array([95, 255, 255])
 
@@ -99,13 +118,15 @@ def judgement(image_path):
             
             # 色を抽出する
             ex_img = cv2.inRange(hsv,LOW_COLOR,HIGH_COLOR)
-            
+            cv2.imwrite("ex_result.png", ex_img)
+
+
             # 輪郭抽出      https://pystyle.info/opencv-find-contours/
             contours,hierarchy = cv2.findContours(ex_img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
             
             # 面積を計算
             areas = np.array(list(map(cv2.contourArea,contours)))
-        
+            print(areas)
 
             if len(areas) == 0 : #or np.max(areas) / (h*w) < AREA_RATIO_THRESHOLD:
                 # 見つからなかったらNoneを返す
@@ -113,34 +134,23 @@ def judgement(image_path):
                 return None
             else:
                 # 面積が最大の塊の重心を計算し返す
-                X = []
-                Y = []
-                for i, contour in enumerate(contours):
-                # 重心の計算
-                    m = cv2.moments(contour)
-                    if m['m00']==0:
-                        pass
-                    else:
-                        x,y= m['m10']/m['m00'] , m['m01']/m['m00']
-                        print(f"Weight Center = ({x}, {y})")
-                        # 座標を四捨五入
-                        x, y = round(x), round(y)
-                        X.append(x)
-                        Y.append(y)
-                first = Y[0]-Y[1]
-                second = Y[-2]-Y[-1]
-            
-                if first^2>second^2:
-                    return "left"
-                else:
-                    return "right"
-                
-
+                max_idx = np.argmax(areas)
+                max_area = areas[max_idx]
+                result = cv2.moments(contours[max_idx])
+                x = int(result["m10"]/result["m00"])
+                y = int(result["m01"]/result["m00"])
+                return (x,y)
 
         
         img = cv2.imread("source.png")
 
-         # 位置を抽出
+            # 位置を抽出
+        pos_ELBOW = find_specific_color(
+                img,
+                AREA_RATIO_THRESHOLD,
+                LOW_COLOR_ELBOW,
+                HIGH_COLOR_ELBOW
+                )
         
         pos_WRIST = find_specific_color(
                 img,
@@ -149,9 +159,18 @@ def judgement(image_path):
                 HIGH_COLOR_WRIST
                 )
 
+        if pos_ELBOW is not None:
+            
+            print(pos_ELBOW)
+            
+        if pos_WRIST is not None:
+            
+            print(pos_WRIST)
+
         
 
 
-"""rospy.init_node('imageforkeypoint')
+
+rospy.init_node('imageforkeypoint')
 imageforkeypoint = ImageForKeypoint()
-rospy.spin()"""
+rospy.spin()
