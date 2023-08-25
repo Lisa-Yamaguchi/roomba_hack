@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg = "navigation_tutorial" type = "simple_control2.py" name = "simple_controller"/>
+</launch>

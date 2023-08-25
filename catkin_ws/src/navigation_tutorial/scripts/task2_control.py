@@ -1,19 +1,37 @@
-from simple_control2 import simple_controller
-from three_dimensions_tutorial.scripts.keypoint_rcnn import judgement
-from three_dimensions_tutorial.scripts import take_image
+#!/usr/bin/env python3
+
+
+from simple_control2 import SimpleController 
+from keypoint_rcnn import judgement
+import take_image
 import rospy
 import cv2
 
 
 step = 0
 
+class TaskManager:
+    def __init__(self):
+        rospy.init_node('task_manager')
+
+    def main():
+        
+if __name__ == '__main__':
+    tm = TaskManager()
+    tm.main()
+        
+
 if __name__=='__main__':
     try:
+        simple_controller = SimpleController()
         simple_controller.go_straight(1.0)
-        simple_controller.turn_left(90)
-        simple_controller.turn_right(90)
+        simple_controller.turn_left(80)
+        simple_controller.go_straight(1.0)
+        simple_controller.turn_left(80)
         step = 1 #撮影地点まで移動
+        print(step)
     except rospy.ROSInitException:
+        print("except")
         pass
 
 if step == 1:
@@ -21,6 +39,7 @@ if step == 1:
     imgsub = take_image.ImageSubscriber()
     images = imgsub.get_image()
     step = 2
+    print(step)
 
 if step == 2:
     ##写真を切り取る
