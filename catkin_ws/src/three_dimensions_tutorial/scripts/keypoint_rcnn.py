@@ -13,7 +13,6 @@ from sensor_msgs.msg import Image as rosImage
 import cv2, cv_bridge
 
 
-
 def judgement(image_path):
         #keypoint画像に変換（コピペ）       https://tech.fusic.co.jp/posts/2019-07-18-torchvision-keypoint-r-cnn/
         image_keypoint = pilImage.open(image_path).convert('RGB')
@@ -110,7 +109,7 @@ def judgement(image_path):
             if len(areas) == 0 : #or np.max(areas) / (h*w) < AREA_RATIO_THRESHOLD:
                 # 見つからなかったらNoneを返す
                 print("the area is too small")
-                return None
+                return "None"
             else:
                 # 面積が最大の塊の重心を計算し返す
                 X = []
