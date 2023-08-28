@@ -5,6 +5,7 @@ from three_dimensions_tutorial.scripts.keypoint_rcnn import judgement
 #from three_dimensions_tutorial.scripts import take_image
 import rospy
 import cv2
+from nav_msgs.msg import Int32s
 
 
 step = 0

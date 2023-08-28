@@ -1,0 +1,4 @@
+float32 straight
+float32 turn
+---
+bool success
