@@ -4,11 +4,13 @@ from navigation_tutorial.srv import MoveTrigger, MoveTriggerRequest
 from navigation_tutorial.srv import TakeImage, TakeImageRequest
 import cv2
 from three_dimensions_tutorial.scripts.keypoint_rcnn import judgement
+from cv_bridge import CvBridge
 
 class TaskManager:
     def __init__(self):
         rospy.init_node('task_manager')
-
+        self.bridge = CvBridge()
+        
         # service client
         self.move_robot = rospy.ServiceProxy('/move_robot', MoveTrigger)
         self.take_image = rospy.ServiceProxy('/take_image', TakeImage)
@@ -91,7 +93,7 @@ class TaskManager:
 
         else:
             rospy.loginfo("take images successed!")
-            goto = self.callback_image(result)
+            goto = self.callback_image(self.bridge.imgmsg_to_cv2(result, "bgr8"))
             if goto == "left":
                 result = self.move(0.0, 30.0)
                 result = self.move(3.0, 0.0)
