@@ -16,8 +16,8 @@ class TaskManager:
         self.take_image = rospy.ServiceProxy('/take_image', TakeImage)
 
         self.move_robot.wait_for_service()
-        self.take_image.wait_for_service()
         rospy.loginfo("Service /move_robot is ready!")
+        self.take_image.wait_for_service()
         rospy.loginfo("Service /take_image is ready!")
 
     def move(self, straight, turn):
