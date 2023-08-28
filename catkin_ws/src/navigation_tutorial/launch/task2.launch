@@ -3,5 +3,6 @@
     
     <node pkg="navigation_tutorial" type="move_robot.py" name="robot_controller" />
     <node pkg="three_dimensions_tutorial" type="take_image.py" name="image_saver" />
+    <node pkg="navigation_tutorial" type="task_manager" name="task2_srv_control.py" />
 
 </launch>
