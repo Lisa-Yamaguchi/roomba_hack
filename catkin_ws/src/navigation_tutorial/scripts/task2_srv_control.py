@@ -3,7 +3,7 @@ import rospy
 from navigation_tutorial.srv import MoveTrigger, MoveTriggerRequest
 from navigation_tutorial.srv import TakeImage, TakeImageRequest
 import cv2
-from three_dimensions_tutorial.scripts.keypoint_rcnn import judgement
+from keypoint_rcnn import judgement
 from cv_bridge import CvBridge
 
 class TaskManager:
