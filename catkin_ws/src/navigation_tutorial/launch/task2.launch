@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="navigation_tutorial" name="task_manager" type="task2_control.py"/>
+    <node pkg="navigation_tutorial" name="simple_controller" type="simple_control2.py"/>
+    <node pkg="three_dimensions_tutorial" name="image_saver" type="take_image.py"/>
+</launch>

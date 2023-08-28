@@ -12,9 +12,12 @@ class SimpleController:
         
         # Publisher
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.task2_pub = rospy.Publisher('task2_step1', Int32, queue_size=10)
+    
 
         # Subscriber
         odom_sub = rospy.Subscriber('/odom', Odometry, self.callback_odom)
+        task2_move_sub = rospy.Subscriber('task2_move', Int32, self.callback_move)
 
         self.x = None
         self.y = None
@@ -68,12 +71,26 @@ class SimpleController:
         e = tf.transformations.euler_from_quaternion(
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w))
         return e[2]
+    
+    def callback_move(self, msg):
+        self.judge = msg.data
+        if self.judge == 4:#left
+            simple_controller.turn_left(30)
+            simple_controller.go_straight(3.0)
+        elif self.judge == 6:#right
+            simple_controller.turn_right(30)
+            simple_controller.go_straight(3.0)
 
 if __name__=='__main__':
     simple_controller = SimpleController()
+    
     try:
         simple_controller.go_straight(1.0)
         simple_controller.turn_left(90)
-        simple_controller.turn_right(90)
+        simple_controller.go_straight(1.0)
+        simple_controller.turn_left(90)
+        simple_controller.task2_pub.publish(1)
+        
     except rospy.ROSInitException:
+        print("except")
         pass

@@ -16,6 +16,8 @@ class ImageSubscriber:
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
         self.save_image = True
+        self.step_sub = rospy.Subscriber('task2_pub', Int32, self.step_callback)
+        self.step_pub = rospy.Publisher('task2_images', list)
 
     def image_callback(self, data):
         if self.save_image:
@@ -38,6 +40,14 @@ class ImageSubscriber:
             images.append(self.cv_image)
             rospy.sleep(1.0)
         return images
+    
+    def step_callback(self, msg):
+        self.step = msg.data
+        if self.step == 2:
+            imgsub = ImageSubscriber()
+            images = imgsub.get_image()
+            self.step_pub.Publish(images)
+
 
 """if __name__ == '__main__':
     
