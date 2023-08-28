@@ -1,33 +1,20 @@
 #!/usr/bin/env python3
 
-
-from simple_control2 import SimpleController 
-from keypoint_rcnn import judgement
-import take_image
+from simple_control2 import SimpleController
+from three_dimensions_tutorial.scripts.keypoint_rcnn import judgement
+from three_dimensions_tutorial.scripts import take_image
 import rospy
 import cv2
 
-
 step = 0
-
-class TaskManager:
-    def __init__(self):
-        rospy.init_node('task_manager')
-
-    def main():
-        
-if __name__ == '__main__':
-    tm = TaskManager()
-    tm.main()
-        
 
 if __name__=='__main__':
     try:
         simple_controller = SimpleController()
         simple_controller.go_straight(1.0)
-        simple_controller.turn_left(80)
+        simple_controller.turn_left(90)
         simple_controller.go_straight(1.0)
-        simple_controller.turn_left(80)
+        simple_controller.turn_left(90)
         step = 1 #撮影地点まで移動
         print(step)
     except rospy.ROSInitException:

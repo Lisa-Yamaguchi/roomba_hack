@@ -5,25 +5,40 @@ import rospy
 import tf
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
+from navigation_tutorial.srv import MoveTrigger, MoveTriggerResponse
 
-class SimpleController:
+class RobotController:
     def __init__(self):
-        rospy.init_node('simple_controller', anonymous=True)
+        rospy.init_node('robot_controller', anonymous=True)
         
         # Publisher
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        self.task2_pub = rospy.Publisher('task2_step1', Int32, queue_size=10)
-    
 
         # Subscriber
         odom_sub = rospy.Subscriber('/odom', Odometry, self.callback_odom)
-        task2_move_sub = rospy.Subscriber('task2_move', Int32, self.callback_move)
+
+        # Service Server
+        rospy.Service('/move_robot', MoveTrigger, self.callback_move_robot)
 
         self.x = None
         self.y = None
         self.yaw = None
         while self.x is None:
             rospy.sleep(0.1)
+
+    def callback_move_robot(self, req):
+        res = MoveTriggerResponse()
+        try:
+            self.go_straight(req.straight)
+            if req.turn >= 0:
+                self.turn_left(req.turn)
+            else:
+                self.turn_right(-req.turn)
+            res.success = True
+            return res
+        except rospy.ROSInterruptException:
+            res.success = False
+            return res
 
     def callback_odom(self, data):
         self.x = data.pose.pose.position.x
@@ -71,26 +86,7 @@ class SimpleController:
         e = tf.transformations.euler_from_quaternion(
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w))
         return e[2]
-    
-    def callback_move(self, msg):
-        self.judge = msg.data
-        if self.judge == 4:#left
-            simple_controller.turn_left(30)
-            simple_controller.go_straight(3.0)
-        elif self.judge == 6:#right
-            simple_controller.turn_right(30)
-            simple_controller.go_straight(3.0)
 
 if __name__=='__main__':
-    simple_controller = SimpleController()
-    
-    try:
-        simple_controller.go_straight(1.0)
-        simple_controller.turn_left(90)
-        simple_controller.go_straight(1.0)
-        simple_controller.turn_left(90)
-        simple_controller.task2_pub.publish(1)
-        
-    except rospy.ROSInitException:
-        print("except")
-        pass
+    simple_controller = RobotController()
+    rospy.spin()
