@@ -2,7 +2,6 @@
 
 import rospy
 from sensor_msgs.msg import Image
-from std_msgs.msg import Int32
 from cv_bridge import CvBridge
 import cv2
 import os
@@ -46,7 +45,7 @@ class ImageSubscriber:
     def get_image(self):
         images = []
         for i in range(5):
-            images.append(self.cv_image)
+            images.append(self.bridge.cv2_to_imgmsg(self.cv_image, "bgr8"))
             rospy.sleep(1.0)
         return images
     
