@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <node pkg="navigation_tutorial" type="task1.py" name="move_to_edges_node" />
+    
+</launch>
