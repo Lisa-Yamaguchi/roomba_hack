@@ -7,4 +7,11 @@
     <!-- localization -->
     <include file="$(find navigation_tutorial)/launch/amcl.launch">
     </include>
+
+    <!-- teleop.launchを起動-->
+    <include file="$(find roomba_teleop)/launch/teleop.launch">
+    </include>
+
+    <!-- rvizを起動-->
+    <node pkg="rviz" type="rviz" name="navigation_rviz" args="-d $(find navigation_tutorial)/configs/navigation.rviz"/>
 </launch>

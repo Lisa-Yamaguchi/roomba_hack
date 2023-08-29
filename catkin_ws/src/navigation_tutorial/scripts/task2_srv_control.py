@@ -28,10 +28,10 @@ class TaskManager:
         response = self.move_robot(command) # service call
         return response.success
     
-    def takeimage(self, start):
+    def takeimage(self):
         command = TakeImageRequest()
-        command.start = start
-        rospy.loginfo(f"request: start={start}")
+        #command.start = start
+        rospy.loginfo(f"request: start=done")
         response = self.take_image(command) # service call
         return response.images
     
