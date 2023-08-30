@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 from sensor_msgs.msg import Image
@@ -47,14 +47,15 @@ class ImageSubscriber:
         images = []
         for i in range(5):
             images.append(self.bridge.cv2_to_imgmsg(self.cv_image, "bgr8"))
+            print("getimaged")
             rospy.sleep(1.0)
         return images
     
     def srv_callback(self, req):
         res = TakeImageResponse()
         try:
-            imgsub = ImageSubscriber()
-            images = imgsub.get_image()
+            
+            images = self.get_image()
             res.images = images
             return res
 

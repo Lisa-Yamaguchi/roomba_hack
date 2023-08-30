@@ -13,9 +13,12 @@ from sensor_msgs.msg import Image as rosImage
 import cv2, cv_bridge
 
 
-def judgement(image_path):
+def judgement(image):
         #keypoint画像に変換（コピペ）       https://tech.fusic.co.jp/posts/2019-07-18-torchvision-keypoint-r-cnn/
-        image_keypoint = pilImage.open(image_path).convert('RGB')
+        
+       
+        cv2.imwrite("images/image_path.png",image)
+        image_keypoint = pilImage.open("image_path.png").convert('RGB')
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -65,6 +68,8 @@ def judgement(image_path):
         vis_point(img, points)
 
         plt.savefig("source.png") 
+        plt.scatter(points[0, :, 0], points[0, :, 1])
+        cv2.imwrite("images/source.png", img)
         
 
 
@@ -98,6 +103,7 @@ def judgement(image_path):
             
             # 色を抽出する
             ex_img = cv2.inRange(hsv,LOW_COLOR,HIGH_COLOR)
+            cv2.imwrite("images/ex_img.png",ex_img)
             
             # 輪郭抽出      https://pystyle.info/opencv-find-contours/
             contours,hierarchy = cv2.findContours(ex_img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -129,9 +135,11 @@ def judgement(image_path):
                 first = Y[0]-Y[1]
                 second = Y[-2]-Y[-1]
             
-                if first^2>second^2:
+                if first^2<second^2:
+                    print("left")
                     return "left"
                 else:
+                    print("right")
                     return "right"
                 
 

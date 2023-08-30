@@ -25,25 +25,25 @@ class Task1Manager:
         """
         タスクの流れを手続的に記述する
         """
-        result = self.move(3.0, 0.0)
+        result = self.move(2.7, 0.0)
         if result:
           rospy.loginfo("move success!")
         else:
           rospy.loginfo("move failed!")
         
-        result = self.move(0.0, 85.0)
+        result = self.move(0.0, 90.0)
         if result:
           rospy.loginfo("turn success!")
         else:
           rospy.loginfo("turn failed!")
 
-        result = self.move(3.0, 0.0)
+        result = self.move(2.5, 0.0)
         if result:
           rospy.loginfo("move success!")
         else:
           rospy.loginfo("move failed!")
 
-        result = self.move(0.0, -85.0)
+        result = self.move(0.0, -90.0)
         if result:
           rospy.loginfo("turn success!")
         else:

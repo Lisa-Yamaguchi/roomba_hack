@@ -29,41 +29,42 @@ class TaskManager:
         return response.success
     
     def takeimage(self):
-        command = TakeImageRequest()
+        commandimg = TakeImageRequest()
         #command.start = start
         rospy.loginfo(f"request: start=done")
-        response = self.take_image(command) # service call
-        return response.images
+        responseimg = self.take_image(commandimg) # service call
+        return responseimg.images
     
     def callback_image(self, images):
-        cut_images = []
+        """cut_images = []
         for i in range(len(images)):
             # 画像読み込み
-            image = cv2.imread(images[i])
+            #image = cv2.imread(images[i])
             # img[top : bottom, left : right]
             # サンプルの切り出し
+            image = images[i]
             cut_image = image[0 : 480, 320: 960]
-            cut_images.append(cut_image)
+            cut_images.append(cut_image)"""
         
         judges = []
-        for j in range(len(cut_images)):
-            judges.append(judgement(cut_images[j]))
-        
+        for j in range(len(images)):
+            judges.append(judgement(images[j]))
+        print(judges)
         if all(i == judges[0] for i in judges):#もし全ての要素が同じだったら
 
             if judges[0] == "left":
-                return "lett"
-            elif judges[0] == "right":
+                return "left"
+            else : #judges[0] == "right":
                 return "right"
-            else:
-                rospy.loginfo("judge failed")
+            #else:
+                #rospy.loginfo("judge failed")
                 #画像を撮り直す
 
     def main(self):
         """
         タスクの流れを手続的に記述する
         """
-        result = self.move(1.0, 0.0)
+        """result = self.move(1.0, 0.0)
         if result:
           rospy.loginfo("move success!")
         else:
@@ -85,24 +86,30 @@ class TaskManager:
         if result:
           rospy.loginfo("turn success!")
         else:
-          rospy.loginfo("turn failed!")
+          rospy.loginfo("turn failed!")"""
 
-        result = self.takeimage()
-        if result == None:
+        resultimg = self.takeimage()
+        if resultimg == None:
            rospy.loginfo("take images failed!")
 
         else:
             rospy.loginfo("take images successed!")
-            goto = self.callback_image(self.bridge.imgmsg_to_cv2(result, "bgr8"))
+            aiu = []
+            for i in range(len(resultimg)):
+            	cv2_rusultimg = self.bridge.imgmsg_to_cv2(resultimg[i], "bgr8")
+            	aiu.append(cv2_rusultimg)
+            goto = self.callback_image(aiu)
             if goto == "left":
-                result = self.move(0.0, 30.0)
+                print("go to left")
+                result = self.move(0.0, 5.0)
                 result = self.move(3.0, 0.0)
                 if result:
                     rospy.loginfo("move success!")
                 else:
                     rospy.loginfo("move failed!")
             elif goto == "right":
-                result = self.move(0.0, -30.0)
+                print("go to right")
+                result = self.move(0.0, -5.0)
                 result = self.move(3.0, 0.0)
                 if result:
                     rospy.loginfo("move success!")
